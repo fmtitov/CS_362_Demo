@@ -1,0 +1,90 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <style>
+		.header {
+			z-index: 1;
+			position: relative;
+			background-color: gray;
+			padding-left: 50px;
+			margin-right: 50%;
+		}
+
+		.logo {
+			z-index: 2;
+			position: absolute;
+		}
+    </style>
+
+</head>
+<body>
+
+    <img src="Dice.jpg" class="logo" width="40" height="40">
+    <h1 class="header">RPG Dice Simulator</h1>
+
+
+    <script>
+        let counter = 2;
+
+
+
+        function newDie() {
+            var break1 = document.createElement("BR");
+            var break2 = document.createElement("BR");
+
+            var label = document.createElement("LABEL");
+            var die = document.createElement("INPUT");
+
+            let dieName = "Die" + counter + "Name";
+            die.setAttribute("id", dieName);
+            die.setAttribute("name", dieName);
+            die.setAttribute("type", "text");
+            label.setAttribute("for", dieName);
+            label.textContent = "Die Nickname:";
+
+            var labelSize = document.createElement("LABEL");
+            var dieSize = document.createElement("INPUT");
+
+            let dieSizeName = "Die" + counter + "Size";
+            dieSize.setAttribute("id", dieSizeName);
+            dieSize.setAttribute("name", dieSizeName);
+            dieSize.setAttribute("type", "text");
+            labelSize.setAttribute("for", dieSizeName);
+            labelSize.textContent = "Number of sides(Ex:6 for a D6):";
+
+            counter++;
+
+            let form = document.getElementById("DieForm");
+            let button = document.getElementById("AddDie");
+
+            form.insertBefore(label, button);
+            form.insertBefore(die, button);
+            form.insertBefore(break1, button);
+            form.insertBefore(labelSize, button);
+            form.insertBefore(dieSize, button);
+            form.insertBefore(break2, button);
+        }
+    </script>
+
+    <form id="DieForm">
+        <label for="PoolNickname">Enter Nickname for Dice Pool:</label>
+        <input type="text" id="PoolNickname" name="PoolNickname"><br>
+        <label for="Die1Name">Die Nickname:</label>
+        <input type="text" id="Die1Name" name="Die1Name"><br>
+        <label for="Die1Size">Number of sides(Ex:6 for a D6):</label>
+        <input type="text" id="Die1Size" name="Die1Size"><br>
+
+        <button type="button" onclick="newDie()" id="AddDie">Add Extra Die</button>
+        <button>Add Flat Bonus</button><br>
+
+        <input type="submit" value="Save Dice Pool">
+        <input type="submit" value="Use Without Saving">
+
+
+    </form>
+
+</body>
+</html>

@@ -1,0 +1,141 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Test_title</title>
+    <style>
+		.header {
+            z-index: 1;
+			position: relative;
+			background-color: gray;
+			padding-left: 50px;
+			margin-right: 50%;
+		}
+
+		.logo {
+			z-index: 2;
+			position: absolute;
+		}
+
+		.DiceRoller {
+            z-index: 1;
+            position: relative;
+			border: 2px solid black;
+			width: 450px;
+			height: 300px;  
+		}
+
+		.DieDropdown {
+			position: relative;
+			display: inline-block;
+		}
+
+		.SingleDice {
+			z-index: 2;
+			display: none;
+			position: absolute;
+			min-width: 100%;
+		}
+
+		.UserDice {
+            position: relative;
+			white-space: pre;
+            top: 50px;
+            left: 20px;
+
+		}
+
+		.Roll {
+			position: absolute;
+			top: 270px;
+		}
+		.result {
+            position: absolute;
+            top: 220px;
+		}
+
+		.DiceImage {
+            width: 200px;
+            height: 200px;
+		}
+
+    </style>
+</head>
+<body>
+    <script>
+
+        let pool = [6];
+
+        function currentDicePool(arr, nicknames, image) {
+            pool = arr;
+            let description = "";
+            for (i = 0; i < arr.length; i++) {
+                description = description.concat(nicknames[i] + "\n");
+                console.log(description);
+            }
+
+            document.getElementById("UserDice").innerHTML = description;
+            document.getElementsByClassName("DiceImage")[0].setAttribute("src", image);
+
+        }
+
+        function toggleSingleDie() {
+            document.getElementById("SingleDice").style.display = "block";
+        }
+
+
+        window.onclick = function (event) {
+            if (!event.target.matches('.Dropdown')) {
+                document.getElementById("SingleDice").style.display = "none";
+            }
+        }
+
+        function rollDice() {
+            result = 0;
+            for (i = 0; i < pool.length; i++) {
+                console.log(Math.random);
+                result += Math.ceil(Math.random() * pool[i]);
+            }
+            console.log(result);
+            document.getElementById("result").innerHTML = "Your Result: " + result;
+        }
+
+
+
+    </script>
+    <img src="Dice.jpg" class="logo" width="40" height="40">
+
+    <h1 class="header">RPG Dice Simulator</h1>
+
+
+    <button onclick="location.replace('./CustomDicePool.html')">Create New Dice Pool</button>
+    <button>Edit Current Dice Pool</button>
+    <div class="DieDropdown">
+        <button onclick="toggleSingleDie()" class="Dropdown">Roll Single Dice</button>
+        <div id="SingleDice" class="SingleDice">
+            <button onclick="currentDicePool([4], ['One Four Sided Die(D4)'], 'D4.png')">D4</button>
+            <button onclick="currentDicePool([6], ['One Six Sided Die(D6)'], 'D6.png')">D6</button>
+            <button onclick="currentDicePool([8], ['One Eight Sided Die(D8)'], 'D8.png')">D8</button>
+            <button onclick="currentDicePool([10], ['One Ten Sided Die(D10)'], 'D10.png')">D10</button>
+            <button onclick="currentDicePool([20], ['One Twenty Sided Die(D20)'], 'D20.png')">D20</button>
+            <button onclick="currentDicePool([100], ['One Hundred Sided Die(D100)'], 'D100.png')">D100</button>
+        </div>
+    </div>
+    <button>Flip Single Coin</button>
+
+
+    <div class="DiceRoller">
+        <h2>Your Dice Pool:</h2>
+
+        <img src='D6.png' class="DiceImage" alt="" align="right">
+
+        <p id="UserDice" class="UserDice">One Six Sided Die(D6)</p>
+
+        <p id="result" class="result">Your Result:</p>
+
+        <button type="button" onclick="rollDice()" class="Roll">Roll Dice!</button>
+    </div>
+
+</body>
+</html>

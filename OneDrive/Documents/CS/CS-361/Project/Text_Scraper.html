@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <h3>Enter the name of the Wikipedia page to get the description</h3>
+
+	<form>
+		<fieldset>
+			<label for="Name">Wikipedia article name:</label><br>
+			<input type="text" id="Name" name="Name">
+			<input type="submit" id="Submit" value="Submit">
+		</fieldset>
+	</form>
+
+    <p>Here is your Description: </p>
+    <p id="Description"></p>
+
+    <script>
+        function scrapeText() {
+            document.getElementById('Submit').addEventListener('click', function (event) {
+                var req = new XMLHttpRequest();
+                let title = document.getElementById('Name').value;
+                title = title.charAt(0).toLowerCase() + title.slice(1);
+                title = title.replace(/ /g, "_");
+
+                req.open("GET", "http://en.wikipedia.org/w/api.php?action=query&prop=extracts&exintro=&origin=*&format=json&titles=" + title, false);
+                req.send(null);
+                var response = JSON.parse(req.responseText);
+				let keys = Object.keys(response.query.pages)
+                console.log(response.query.pages[keys[0]].extract);
+                let text = response.query.pages[keys[0]].extract;
+				text = text.replace(/(<([^>]+)>)/ig, "");
+				document.getElementById('Description').textContent = text;
+				event.preventDefault();
+            })
+        }
+
+
+        document.addEventListener('DOMContentLoaded', scrapeText);
+
+    </script>
+
+    
+</body>
+</html>
