@@ -5,22 +5,18 @@
     <meta charset="utf-8" />
     <title></title>
     <style>
-		#DelDie {
-            visibility: hidden;
-		}
+        .header {
+            z-index: 1;
+            position: relative;
+            background-color: gray;
+            padding-left: 50px;
+            margin-right: 50%;
+        }
 
-		.header {
-			z-index: 1;
-			position: relative;
-			background-color: gray;
-			padding-left: 50px;
-			margin-right: 50%;
-		}
-
-		.logo {
-			z-index: 2;
-			position: absolute;
-		}
+        .logo {
+            z-index: 2;
+            position: absolute;
+        }
     </style>
 
 </head>
@@ -34,9 +30,9 @@
         let counter = 1;
 
         document.addEventListener("DOMContentLoaded", function () {
-            if (sessionStorage.getItem("edit") == 1) {
+            if (sessionStorage.getItem("edit")) {
                 pool = sessionStorage.getItem("customPool").split('|');
-                
+
                 if (pool[pool.length - 1].localeCompare('db')){
 					document.getElementById("PoolNickname").value = pool[0];
 					document.getElementById("Die1Name").value = pool[1];
@@ -50,6 +46,9 @@
 					}
 					sessionStorage.setItem("edit", 0);
                 }
+                else {
+
+                }
             }
 
 		});
@@ -58,12 +57,6 @@
             counter++;
             var break1 = document.createElement("BR");
             var break2 = document.createElement("BR");
-
-            var dieSet = document.createElement("FIELDSET");
-			dieSet.setAttribute("id", counter);
-
-            var legend = document.createElement("LEGEND");
-            legend.textContent = "Die " + counter;
 
             var label = document.createElement("LABEL");
             var die = document.createElement("INPUT");
@@ -89,24 +82,12 @@
             let form = document.getElementById("DieForm");
             let button = document.getElementById("AddDie");
 
-			dieSet.appendChild(legend);
-            dieSet.appendChild(label);
-            dieSet.appendChild(die);    
-            dieSet.appendChild(break1);
-            dieSet.appendChild(labelSize);
-			dieSet.appendChild(dieSize);
-            dieSet.appendChild(break2);
-
-            form.insertBefore(dieSet, button);
-            document.getElementById("DelDie").style.visibility = "visible";
-        }
-
-        function deleteDie() {
-            document.getElementById(counter).remove();
-            counter--;
-            if (counter == 1) {
-				document.getElementById("DelDie").style.visibility = "hidden";
-            }
+            form.insertBefore(label, button);
+            form.insertBefore(die, button);
+            form.insertBefore(break1, button);
+            form.insertBefore(labelSize, button);
+            form.insertBefore(dieSize, button);
+            form.insertBefore(break2, button);
         }
 
         function simpleSubmit() {
@@ -122,45 +103,21 @@
             window.location.replace("Main_Page.html");
         }
 
-		function savePool() {
-            let num = localStorage.getItem("numSaved");
-            if (num == null || num < 5) {
-				let submitString = "";
-				submitString += document.getElementById("PoolNickname").value;
-				for (i = 1; i <= counter; i++) {
-					submitString += "|";
-					submitString += document.getElementById("Die" + i + "Name").value;
-					submitString += "|";
-					submitString += document.getElementById("Die" + i + "Size").value;
-				}
-                sessionStorage.setItem("customPool", submitString);
-				if (num == null) { num = 1 }
-                else { num++ };
-				localStorage.setItem("numSaved", num);
-                localStorage.setItem("savedPool" + num, submitString);
-				window.location.replace("Main_Page.html");
-            }
-            else { console.log("You have to remove a Saved Die First"); }
-			
-        }
 
-            
     </script>
 
     <form id="DieForm" action="Main_Page.html">
         <label for="PoolNickname">Enter Nickname for Dice Pool:</label>
         <input type="text" id="PoolNickname" name="PoolNickname"><br>
-        <fieldset id="1">
-            <legend>Die 1</legend>
-            <label for="Die1Name">Die Nickname:</label>
-            <input type="text" id="Die1Name" name="Die1Name"><br>
-            <label for="Die1Size">Number of sides(Ex:6 for a D6):</label>
-            <input type="text" id="Die1Size" name="Die1Size"><br>
-        </fieldset>
+        <label for="Die1Name">Die Nickname:</label>
+        <input type="text" id="Die1Name" name="Die1Name"><br>
+        <label for="Die1Size">Number of sides(Ex:6 for a D6):</label>
+        <input type="text" id="Die1Size" name="Die1Size"><br>
+
         <button type="button" onclick="newDie()" id="AddDie">Add Extra Die</button>
-        <button type="button" onclick="deleteDie()" id="DelDie">Delete Die</button>
-        <!--<button>Add Flat Bonus</button>--><br>
-        <button type="button" onclick="savePool()" id="SavePool">Save Dice Pool</button>
+        <button>Add Flat Bonus</button><br>
+
+        <input type="submit" value="Save Dice Pool">
         <button type="button" onclick="simpleSubmit()" id="SimpleSubmit">Use Without Saving</button>
 
 

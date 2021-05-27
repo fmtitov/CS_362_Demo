@@ -18,12 +18,17 @@
 			position: absolute;
 		}
 
-		.DiceRoller {
+		#DiceRoller {
             z-index: 1;
             position: relative;
-			border: 2px solid black;
 			width: 450px;
 			height: 300px;  
+		}
+
+		#DiceList {
+			width: 300px;
+			height: 300px;
+            margin-left: 15px;
 		}
 
 		.DieDropdown {
@@ -60,24 +65,105 @@
             height: 200px;
 		}
 
+		.divs {
+			float: left;
+			border: 2px solid black;
+		}
+
+
     </style>
 </head>
 <body>
     <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let customPool = sessionStorage.getItem("customPool");
+            if (customPool) {
+                loadCustomPool(customPool);
+            }
+            let numSaved = localStorage.getItem("numSaved");
+            console.log(numSaved);
+            if (numSaved) {
+                for (i = 1; i <= numSaved; i++) {
+                    let name = "savedPool" + i;
+                    let pool = localStorage.getItem(name);
+                    let poolArr = pool.split("|");
+                    var poolListItem = document.createElement("li");
+					poolListItem.setAttribute("id", name);
+                    var button = document.createElement("button");
+                    button.onclick = function () {
+                        loadCustomPool(pool);
+                    }
+                    var editb = document.createElement("button");
+					editb.onclick = function () {
+                        editPool(0, pool);
+					}
+                    var delb = document.createElement("button");
+					delb.onclick = function () {
+                        document.getElementById("SavedPools").removeChild(document.getElementById(name));
+                        localStorage.setItem("numSaved", localStorage.getItem("numSaved") - 1);
+                        for (j = parseInt(name.split("savedPool")[1]); j <= localStorage.getItem("numSaved"); j++) {
+                            localStorage.setItem("savedPool" + j, localStorage.getItem("savedPool" + (j + 1)));
+                            console.log("savedPool" + (j + 1));
+                        }
+                        localStorage.removeItem("savedPool" + (localStorage.getItem("numSaved") + 1));
+					}
+
+                    button.textContent = poolArr[0];
+                    editb.textContent = "Edit";
+					delb.textContent = "Delete";
+                    poolListItem.appendChild(button);
+                    poolListItem.appendChild(editb);
+					poolListItem.appendChild(delb);
+                    document.getElementById("SavedPools").appendChild(poolListItem);
+                }
+            }
+		});
 
         let pool = [6];
+        let dice = ["One Six Sided Die(D6)"]
 
-        function currentDicePool(arr, nicknames, image) {
+        function loadCustomPool(customPool) {
+            let poolArr = customPool.split("|");
+
+            let diceNames = [];
+            let diceSizes = [];
+
+            for (i = 1; i < poolArr.length - 1; i += 2) {
+                diceNames.push(poolArr[i]);
+                diceSizes.push(parseInt(poolArr[i + 1]));
+                }
+            currentDicePool(diceSizes, diceNames, "D" + diceSizes[0] + ".png", poolArr[0]);
+        }
+
+
+        function currentDicePool(arr, nicknames, image, name) {
             pool = arr;
             let description = "";
+            dice = [];
             for (i = 0; i < arr.length; i++) {
                 description = description.concat(nicknames[i] + "\n");
-                console.log(description);
+                dice.push(nicknames[i]);
             }
 
             document.getElementById("UserDice").innerHTML = description;
             document.getElementsByClassName("DiceImage")[0].setAttribute("src", image);
+			document.getElementById("PoolName").innerHTML = "Your Dice Pool: " + name;
 
+            storedPool();
+        }
+
+        function storedPool() {
+
+			let lastUsedPool = "";
+			let name = document.getElementById("PoolName").innerHTML;
+            lastUsedPool += name.split('Your Dice Pool: ')[1];
+            for (i = 0; i < pool.length; i++) {
+				lastUsedPool += "|";
+				lastUsedPool += dice[i];
+				lastUsedPool += "|";
+				lastUsedPool += pool[i];
+			}
+            sessionStorage.setItem("customPool", lastUsedPool);
         }
 
         function toggleSingleDie() {
@@ -97,8 +183,24 @@
                 console.log(Math.random);
                 result += Math.ceil(Math.random() * pool[i]);
             }
-            console.log(result);
             document.getElementById("result").innerHTML = "Your Result: " + result;
+        }
+
+        function editPool(curPool, pool) {
+            if (curPool) {
+                storedPool();
+            }
+            else {
+				sessionStorage.setItem("customPool", pool);
+            }
+			sessionStorage.setItem("edit", 1);
+			location.replace('./CustomDicePool.html');
+        }
+
+        function newPool() {
+            sessionStorage.setItem("edit", 0);
+            sessionStorage.removeItem("customPool");
+			location.replace('./CustomDicePool.html')
         }
 
 
@@ -109,24 +211,24 @@
     <h1 class="header">RPG Dice Simulator</h1>
 
 
-    <button onclick="location.replace('./CustomDicePool.html')">Create New Dice Pool</button>
-    <button>Edit Current Dice Pool</button>
+    <button onclick="newPool()">Create New Dice Pool</button>
+    <button onclick="editPool(1, '')">Edit Current Dice Pool</button>
     <div class="DieDropdown">
         <button onclick="toggleSingleDie()" class="Dropdown">Roll Single Dice</button>
         <div id="SingleDice" class="SingleDice">
-            <button onclick="currentDicePool([4], ['One Four Sided Die(D4)'], 'D4.png')">D4</button>
-            <button onclick="currentDicePool([6], ['One Six Sided Die(D6)'], 'D6.png')">D6</button>
-            <button onclick="currentDicePool([8], ['One Eight Sided Die(D8)'], 'D8.png')">D8</button>
-            <button onclick="currentDicePool([10], ['One Ten Sided Die(D10)'], 'D10.png')">D10</button>
-            <button onclick="currentDicePool([20], ['One Twenty Sided Die(D20)'], 'D20.png')">D20</button>
-            <button onclick="currentDicePool([100], ['One Hundred Sided Die(D100)'], 'D100.png')">D100</button>
+            <button onclick="currentDicePool([4], ['One Four Sided Die(D4)'], 'D4.png', 'D4')">D4</button>
+            <button onclick="currentDicePool([6], ['One Six Sided Die(D6)'], 'D6.png', 'D6')">D6</button>
+            <button onclick="currentDicePool([8], ['One Eight Sided Die(D8)'], 'D8.png', 'D8')">D8</button>
+            <button onclick="currentDicePool([10], ['One Ten Sided Die(D10)'], 'D10.png', 'D10')">D10</button>
+            <button onclick="currentDicePool([20], ['One Twenty Sided Die(D20)'], 'D20.png', 'D20')">D20</button>
+            <button onclick="currentDicePool([100], ['One Hundred Sided Die(D100)'], 'D100.png', 'D100')">D100</button>
         </div>
     </div>
-    <button>Flip Single Coin</button>
+    <button>Flip Single Coin</button><br>
 
 
-    <div class="DiceRoller">
-        <h2>Your Dice Pool:</h2>
+    <div id="DiceRoller" class="divs">
+        <h2 id="PoolName">Your Dice Pool: </h2>
 
         <img src='D6.png' class="DiceImage" alt="" align="right">
 
@@ -135,6 +237,11 @@
         <p id="result" class="result">Your Result:</p>
 
         <button type="button" onclick="rollDice()" class="Roll">Roll Dice!</button>
+    </div>
+
+    <div id="DiceList" class="divs">
+        <ul id="SavedPools"></ul>
+
     </div>
 
 </body>
